@@ -19,7 +19,7 @@
 	nFloor
     Math.log
     aicc
-	toPercent
+	toP
     
 	// Math.min.apply
 	// Math.max.apply
@@ -107,8 +107,8 @@
 		return (n*Math.log(ss/n))+(2*(p+q+(1+const_factor))*n/(n-p-q-(2+const_factor)));
 	}
 	
-	// Format number as a percentage.  Eg. toPercent(2.3454654,1) => "234.5%"
-	function toPercent(number, decimals) {
+	// Format number as a percentage.  Eg. toP(2.3454654,1) => "234.5%"
+	function toP(number, decimals) {
 	  return +(Math.round(number*100 + "e+" + decimals)  + "e-" + decimals) + '%';
 	}
 
@@ -436,7 +436,7 @@
 	a.nCeil = nCeil,
 	a.nFloor = nFloor,
     a.aicc = aicc,
-	a.toPercent = toPercent,
+	a.toP = toP,
 
     a.numericLength = numericLength,
     a.sumArray = sumArray,
