@@ -15,11 +15,13 @@ var histogram = require('histogramjs')
 // HEADER
 
 
-var series = require('./goog_monthly_derived.json');
-var values = series.data[3];
+var series = require('./sp_monthly.json');
+var values = series.data[5]; // 6th column
 
 var min = Math.min.apply(null, values).toPrecision(1),
 	max = Math.max.apply(null, values).toPrecision(1),
+// var min = -.1,
+// 	max = .1,
 	buckets = 10;
 
 console.log(min, " ", max);
