@@ -140,15 +140,15 @@
         module.exports = a;
     }
 
-    if (typeof ender === 'undefined') {
-        // this.convert = convertSeriesFrequency;
-        window.dm = a;
-    }
-
-    if (typeof define === "function" && define.amd) {
+    else if (typeof define === "function" && define.amd) {
         define('dm', [], function () { 
             return a; 
         });
+    }
+
+    else if (typeof ender === 'undefined') {
+        // this.convert = convertSeriesFrequency;
+        window.dm = a;
     }
 
 }).call(this);
