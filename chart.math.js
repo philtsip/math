@@ -4,14 +4,15 @@
 
 /*  JAVASCRIPT CHART MATH UTILS
 
-    tickWidth
-	axisDimensions
+	dimensions
 */
 
 (function(){
 
     'use strict';
     
+	var am = require('./array.math.js');
+
 	function tickWidth(x) { // x = diff between max and min of data
 		if (x <=1)
 			return .1; // ~10 ticks
@@ -62,21 +63,21 @@
 
     // Exports and modularity
 	var a = {};
-	a.tickWidth = tickWidth;
-    a.axisDimensions = axisDimensions;
+    a.dimensions = axisDimensions;
 	
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = a;
     }
 
-    if (typeof ender === 'undefined') {
-        window.cm = a;
+    else if (typeof define === "function" && define.amd) {
+        define('cm', [], function () { 
+            return a; 
+        });
     }
 
-    if (typeof define === "function" && define.amd) {
-        define('cm', [], function () { 
-            return a;
-        });
+    else if (typeof ender === 'undefined') {
+        // this.convert = convertSeriesFrequency;
+        window.cm = a;
     }
 
 }).call(this);
