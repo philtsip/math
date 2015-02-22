@@ -12,6 +12,11 @@
     
     isNumber
     round
+	ceil
+	floor
+	nearest
+	nCeil
+	nFloor
     Math.log
     aicc
     
@@ -28,6 +33,9 @@
     diffArray
 	percentdiffArray
     roundArray
+
+	countif
+	sumif
     
     Array.prototype.transpose
     addArray
@@ -49,6 +57,31 @@
 	//  Source: http://stackoverflow.com/questions/11832914/round-to-at-most-2-decimal-places-in-javascript#comment42209497_19722641
 	function round(number, decimals) {
 	  return +(Math.round(number + "e+" + decimals)  + "e-" + decimals);
+	}
+
+	//  ceil(number, decimals), e.g. ceil(10.3333, 2)
+	function ceil(number, decimals) {
+	  return +(Math.ceil(number + "e+" + decimals)  + "e-" + decimals);
+	}
+
+	//  floor(number, decimals), e.g. floor(10.3333, 2)
+	function floor(number, decimals) {
+	  return +(Math.floor(number + "e+" + decimals)  + "e-" + decimals);
+	}
+
+	//  nearest(number, rounding), e.g. nearest(1319, 500)
+	function nearest(number, rounding) {
+	  return +(Math.round(number/rounding) * rounding);
+	}
+
+	//  nCeil(number, rounding), e.g. nCeil(1319, 500)
+	function nCeil(number, rounding) {
+	  return +(Math.ceil(number/rounding) * rounding);
+	}
+
+	//  nFloor(number, rounding), e.g. nFloor(1319, 500)
+	function nFloor(number, rounding) {
+	  return +(Math.floor(number/rounding) * rounding);
 	}
 
 	//  Math.log(number, base), e.g. Math.log(10, 2)
@@ -168,8 +201,9 @@
 	};
 
 
-	// diffArray([array], optional_span)
-	// Returns an array of differences between array elements.  Initial elements returned as null.  2000 - 2010 = 10 year span.
+	// diffArray([array], optional_rolling_span)
+	// Returns an array of differences between array elements.  Initial elements returned as null.  
+	// Span designates gap between comparison points.  eg. 2000 - 2001 = 1 year span.  2000 - 2010 = 10 year span.  Calculated on a rolling basis.
 	// Example: diffArray([5, 2]);
 
 	function diffArray(input_array, span) {
@@ -193,8 +227,9 @@
 	    	return null;
 	};
 
-	// percentdiffArray([array], optional_span)
+	// percentdiffArray([array], optional_rolling_span)
 	// Returns an array of % change between array elements.  Initial elements returned as null
+	// Span designates gap between comparison points.  eg. 2000 - 2001 = 1 year span.  2000 - 2010 = 10 year span.  Calculated on a rolling basis.
 	// Example: percentdiffArray([5, 2]);
 
 	function percentdiffArray(input_array, span) {
@@ -243,6 +278,43 @@
 	    }
 	    else
 	    	return null;
+	};
+	
+	// Excel COUNTIF
+	// SOURCE: https://github.com/sutoiku/formula.js
+	function countif(range, criteria) {
+
+	  if (!/[<>=!]/.test(criteria)) {
+	    criteria = '=="' + criteria + '"';
+	  }
+
+	  var matches = 0;
+	  for (var i = 0; i < range.length; i++) {
+	    if (typeof range[i] !== 'string') {
+	      if (eval(range[i] + criteria)) {
+	        matches++;
+	      }
+	    } else {
+	      if (eval('"' + range[i] + '"' + criteria)) {
+	        matches++;
+	      }
+	    }
+	  }
+	  return matches;
+	};
+	
+	// Excel SUMIF
+	// SOURCE: https://github.com/sutoiku/formula.js
+	function sumif(range, criteria) {
+
+	  if (range instanceof Error) {
+	    return range;
+	  }
+	  var result = 0;
+	  for (var i = 0; i < range.length; i++) {
+	    result += (eval(range[i] + criteria)) ? range[i] : 0;
+	  }
+	  return result;
 	};
 
 	//  ARRAY TRANSFORMATIONS
@@ -336,6 +408,11 @@
 	var a = {};
 	a.isNumber = isNumber;
     a.round = round,
+	a.ceil = ceil,
+	a.floor = floor,
+	a.nearest = nearest,
+	a.nCeil = nCeil,
+	a.nFloor = nFloor,
     a.aicc = aicc,
 
     a.numericLength = numericLength,
@@ -348,6 +425,9 @@
     a.diffArray = diffArray,
 	a.percentdiffArray = percentdiffArray,
     a.roundArray = roundArray,
+
+	a.countif = countif,
+    a.sumif = sumif,
 
     a.addArray = addArray,
     a.pastorFuture = pastorFuture;
