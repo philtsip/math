@@ -5,6 +5,7 @@
 /*  JAVASCRIPT DATE MATH UTILS
 
 	getWeek
+	LastDayofMonth
 	convertSeriesFrequency
 */
 
@@ -42,6 +43,14 @@
  
 	  return weekNr;    
  
+	}
+	
+	// Returns last day of month.  
+	// Simplified to not calulate Feb 29 for leap years.  More complex version: http://javascript.about.com/library/bllday.htm
+	function LastDayofMonth(month) { // starting from 1 <-- not JS DATE standard!!!
+		var numdays = [31, 28, 31, 30, 31, 30, 31, 31, 30, 31, 30, 31];
+		
+		return numdays[month-1]; 		
 	}
 
 	// Options: weekly, monthly, annual
@@ -124,6 +133,7 @@
 
     // Exports and modularity
 	var a = {};
+	a.LastDayofMonth = LastDayofMonth;
 	a.convert = convertSeriesFrequency;
 
     if (typeof module !== 'undefined' && module.exports) {
