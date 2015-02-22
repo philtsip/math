@@ -19,9 +19,10 @@
 	nFloor
     Math.log
     aicc
+	toPercent
     
-	Math.min.apply
-	Math.max.apply
+	// Math.min.apply
+	// Math.max.apply
 
     numericLength
     sumArray
@@ -36,8 +37,10 @@
 
 	countif
 	sumif
+	percentif
     
-    Array.prototype.transpose
+    // slice
+	Array.prototype.transpose
     addArray
     pastorFuture
 */
@@ -46,7 +49,7 @@
 
     'use strict';
     
-	//  ARRAY MATH
+	//  MATH
 
 	// Source: http://stackoverflow.com/questions/18082/validate-numbers-in-javascript-isnumeric
 	function isNumber(n) {
@@ -96,7 +99,6 @@
 	// AICC
 	// aicc(n_after_diff, p, q, ss, include_constant)
 	// Example: aicc(786, 2, 1, 1.05297, false) == -5191.607634684157
-
 	function aicc (n, p, q, ss, constant) {
 		var const_factor = 0;
 		if (constant)
@@ -104,6 +106,13 @@
 
 		return (n*Math.log(ss/n))+(2*(p+q+(1+const_factor))*n/(n-p-q-(2+const_factor)));
 	}
+	
+	// Format number as a percentage.  Eg. toPercent(2.3454654,1) => "234.5%"
+	function toPercent(number, decimals) {
+	  return +(Math.round(number*100 + "e+" + decimals)  + "e-" + decimals) + '%';
+	}
+
+	//  ARRAY MATH
 
 	// Min of array
 	// Math.min.apply(null, arr);
@@ -139,16 +148,14 @@
 	};
 
 	function meanArray(array) {
-	    // requires sumArray
-	    // requires numericLength
+	    // requires sumArray and numericLength
 	    return sumArray(array) / numericLength(array);
 	};
 
 
-	// sumSquares(array, false)
-
+	// Eg. sumSquares(array, false)
 	function sumSquares(input_array, constant) {
-	    // requires meanArray, sumArray
+	    // requires meanArray and isNumber
     
 	    var mean_array = 0;
 	    if (constant)
@@ -282,6 +289,8 @@
 	
 	// Excel COUNTIF
 	// SOURCE: https://github.com/sutoiku/formula.js
+	// + exclude nulls from comparisons, to prevent counting for <=0 and >=0.
+	// additionally, works for undefined (eval as null), +/- infinity (eval as infinity), and NaN (does not eval in numeric comparison)
 	function countif(range, criteria) {
 
 	  if (!/[<>=!]/.test(criteria)) {
@@ -290,12 +299,17 @@
 
 	  var matches = 0;
 	  for (var i = 0; i < range.length; i++) {
-	    if (typeof range[i] !== 'string') {
+		
+		if ( range[i] == null ) {}
+	    else if (typeof range[i] !== 'string') {
 	      if (eval(range[i] + criteria)) {
+			// console.log(i+" "+range[i]);
 	        matches++;
 	      }
-	    } else {
+	    } 
+		else {
 	      if (eval('"' + range[i] + '"' + criteria)) {
+  			// console.log(i+" "+range[i]);
 	        matches++;
 	      }
 	    }
@@ -305,6 +319,7 @@
 	
 	// Excel SUMIF
 	// SOURCE: https://github.com/sutoiku/formula.js
+	
 	function sumif(range, criteria) {
 
 	  if (range instanceof Error) {
@@ -315,6 +330,13 @@
 	    result += (eval(range[i] + criteria)) ? range[i] : 0;
 	  }
 	  return result;
+	};
+
+	// PERCENTIF (numeric)
+	// likelihood of an obvserved criteria in an array
+	
+	function percentif(range, criteria) {
+	  return countif(range,criteria)/numericLength(range);
 	};
 
 	//  ARRAY TRANSFORMATIONS
@@ -414,6 +436,7 @@
 	a.nCeil = nCeil,
 	a.nFloor = nFloor,
     a.aicc = aicc,
+	a.toPercent = toPercent,
 
     a.numericLength = numericLength,
     a.sumArray = sumArray,
@@ -428,6 +451,7 @@
 
 	a.countif = countif,
     a.sumif = sumif,
+    a.percentif = percentif,
 
     a.addArray = addArray,
     a.pastorFuture = pastorFuture;
@@ -436,14 +460,15 @@
         module.exports = a;
     }
 
-    if (typeof ender === 'undefined') {
-        window.am = a;
+    else if (typeof define === "function" && define.amd) {
+        define('am', [], function () { 
+            return a; 
+        });
     }
 
-    if (typeof define === "function" && define.amd) {
-        define('am', [], function () { 
-            return a;
-        });
+    else if (typeof ender === 'undefined') {
+        // this.convert = convertSeriesFrequency;
+        window.am = a;
     }
 
 }).call(this);
