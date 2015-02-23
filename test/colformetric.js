@@ -14,11 +14,11 @@ var column = am.colforMetric(series, metric);
 var comparisons_eng = ["monthly", "annual", "5yr", "7yr", "10yr"];
 var comparisons = [1,12,60,84,120];
 
-for (var s = 0; s < comparisons.length; s++) {
+for (var i = 0; i < comparisons.length; i++) {
 	// console.log(JSON.stringify(am.roundArray(am.diffArray(series.data[column],120),2)));
-	var values = am.percentdiffArray(series.data[column],comparisons[s]);	
+	var values = am.percentdiffArray(series.data[column],comparisons[i]);	
 	
-	console.log(comparisons_eng[s] + " returns");
+	console.log(comparisons_eng[i] + " returns");
 	console.log("Average return: " + am.toP(am.meanArray(values),1));
 }
 

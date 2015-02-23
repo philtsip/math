@@ -5,12 +5,15 @@ var series = require('./sp_monthly.json');
 
 // HEADER
 
-var comparisons_eng = ["monthly", "annual", "5yr", "10yr"];
-var comparisons = [3,5,7,9];
+var metric = "adj_close";
+var column = am.colforMetric(series, metric); 
+
+var comparisons_eng = ["monthly", "annual", "5yr", "7yr", "10yr"];
+var comparisons = [1,12,60,84,120];
 
 for (var i = 0; i < comparisons.length; i++) {
 
-	var values = series.data[comparisons[i]];
+	var values = am.percentdiffArray(series.data[column],comparisons[i]);	
 
 	var xAxis = cm.dimensions(values);
 
