@@ -8,7 +8,7 @@ var comparisons = [1,12,60,84,120];
 
 var dcolumn = series.meta.columns.indexOf(metric + "_pdiff_" + comparisons[i]);
 
-if ( dcolumn !== null) {
+if ( dcolumn != -1) {
 	values = series.data[dcolumn];	
 	save_col = 0;	
 }
