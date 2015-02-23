@@ -41,6 +41,7 @@
     
     // slice
 	Array.prototype.transpose
+	forwardlooking
 	addArray
     pastorFuture
 */
@@ -382,18 +383,25 @@
 	};
 	
 
-	// DATA STRUCTURE
-	//
-	// var series = {
-	// 	"meta": {
-	// 		"columns": ["date", "volume", "adj_close"],
-	// 	},
-	// 	"data": [
-	// 		[],
-	// 		[],
-	// 		[]
-	// 	]
-	// }
+	// Makes diff/%diff data series forward-looking by
+	// Rotating the diff/%diff factor from end date to origin date
+	// Eg. forwardlooking(series.data[column],num_diffs).  forwardlooking([null,null,0.5,0.4],2) => [0.5,0.4,null,null]
+	// (Alternatively, could be done by rotating: http://stackoverflow.com/questions/1521071/how-do-i-shift-an-array-of-items-up-by-4-places-in-javascript)
+	function forwardlooking(input_array, span) {
+
+	    if (input_array instanceof Array) {
+
+		    var output_array = input_array.slice(span);
+	
+			for (var i = 0; i < span; i++) 
+				output_array.push(null);
+
+	    	return output_array;
+	    }
+	    else
+	    	return null;
+	};
+
 
 	// assume both arrays are sorted by first column
 	// second array must have exactly 2 columns
@@ -467,6 +475,7 @@
     a.sumif = sumif,
     a.percentif = percentif,
 
+	a.forwardlooking = forwardlooking,
     a.addArray = addArray,
     a.pastorFuture = pastorFuture;
 	
