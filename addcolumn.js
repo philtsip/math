@@ -1,12 +1,12 @@
 var metric = "adj_close";
 var save_flag = 1;
-var mcolumn = am.colforMetric(series, metric);
+var mcolumn = series.meta.columns.indexOf(metric);
 var values = [];
 
 var comparisons_eng = ["monthly", "annual", "5yr", "7yr", "10yr"];
 var comparisons = [1,12,60,84,120];
 
-var dcolumn = am.colforMetric(series, metric + "_pdiff_" + comparisons[i]);
+var dcolumn = series.meta.columns.indexOf(metric + "_pdiff_" + comparisons[i]);
 
 if ( dcolumn !== null) {
 	values = series.data[dcolumn];	

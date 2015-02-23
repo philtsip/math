@@ -9,7 +9,7 @@ var series = require('./sp_monthly.json');
 // MAIN
 
 var metric = "adj_close";
-var column = am.colforMetric(series, metric); 
+var column = series.meta.columns.indexOf(metric); 
 
 var comparisons_eng = ["monthly", "annual", "5yr", "7yr", "10yr"];
 var comparisons = [1,12,60,84,120];
