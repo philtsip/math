@@ -41,7 +41,8 @@
     
     // slice
 	Array.prototype.transpose
-    addArray
+    colforMetric
+	addArray
     pastorFuture
 */
 
@@ -380,6 +381,30 @@
 
 	  return t;
 	};
+	
+
+	// DATA STRUCTURE
+	//
+	// var series = {
+	// 	"meta": {
+	// 		"columns": ["date", "volume", "adj_close"],
+	// 	},
+	// 	"data": [
+	// 		[],
+	// 		[],
+	// 		[]
+	// 	]
+	// }
+
+	// Look up the column number for a particular metric
+	function colforMetric (series, metric) {
+		for (var i = 0; i < series.meta.columns.length; i++) {
+			if (series.meta.columns[i] == metric)
+				return i;
+		}	
+		return null;
+	}
+
 
 	// assume both arrays are sorted by first column
 	// second array must have exactly 2 columns
@@ -453,6 +478,7 @@
     a.sumif = sumif,
     a.percentif = percentif,
 
+	a.colforMetric = colforMetric,
     a.addArray = addArray,
     a.pastorFuture = pastorFuture;
 	
