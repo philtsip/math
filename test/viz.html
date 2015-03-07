@@ -6,6 +6,7 @@
 <script type="text/javascript" src="highcharts.js"></script>
 <script type="text/javascript" src="./../array.math.js"></script>
 <script type="text/javascript" src="./../chart.math.js"></script>
+<script type="text/javascript" src="./../node_modules/histogramjs/histogram.js"></script>
 
 <!-- <script type="text/javascript" src="http://canvg.googlecode.com/svn/trunk/rgbcolor.js"></script> -->
 <!-- <script type="text/javascript" src="https://canvg.googlecode.com/svn-history/r157/trunk/canvg.js"></script> -->
@@ -112,11 +113,21 @@ $(function() {
 					title: {
 						style: default_style
 					},
+					// gridLineWidth: 0,
 					labels: {
 						style: default_style
 					},
 					stackLabels: {
-						enabled: true
+						enabled: true,
+						style: default_style,
+						formatter: function() {
+							if (this.total != 0) {
+								return this.total;
+							} else {
+								return null;
+							}
+						}
+						
 					}
 				},
 				legend: {
@@ -136,7 +147,8 @@ $(function() {
 					series: {
 						animation: false,                
 						borderWidth: 1,
-		                borderColor: '#dddddd'
+		                borderColor: '#dddddd',
+						// backgroundColor: 'rgba(252, 255, 197, 0.7)'
 
 					},
 					column: {
@@ -192,11 +204,13 @@ $(function() {
 	
 	}
 	
-	function chartData() {
+	function chartData(title, chart_data) {
+		var zero_line = chart_data.x.indexOf(0)-.5;
+		
 		return {
 			
 			title: {
-				text:  '7yr returns'
+				text:  title
 			},
 			yAxis: {
 				title: {
@@ -207,18 +221,81 @@ $(function() {
 				title: {
 					text: '% total return',
 				},
-				categories: [-1,-0.5,0,0.5,1,1.5,2,2.5,],
+				categories: chart_data.x,
+	            plotLines: [{
+	                color: '#FF0000',
+	                width: 2,
+	                value: zero_line,
+					dashStyle: 'dash'
+	            }]
+				
 			},
 			series: [{
 						name: "10yr returns",
-						data: [6,426,660,327,172,75,49,0,]
+						data: chart_data.y
 					}]		
 		}	
 	}
 
-
-	$('#chart').highcharts(generateChart(chartTemplate("histogram"), chartMeta(), chartData()));
+// HISTOGRAM
 	
+	// CONSTANTS
+
+	var url = './sp_monthly.json';
+	var metric = "adj_close";
+
+	var values = [], xAxis = {}, min, max, ticks, buckets, x, y = [], data, histoData = {}, log = "";
+
+	var comparisons_eng = ["monthly", "annual", "5yr", "7yr", "10yr", "20yr"];
+	var comparisons = [1,12,60,84,120,240];
+
+	//  MAIN
+	$.getJSON(url, function(body, textStatus, jqXHR) {
+		console.log(url + " loaded successfully");
+
+		var series = body;
+		var column = series.meta.columns.indexOf(metric); 
+
+		for (var i = 0; i < comparisons.length; i++) {
+
+			values = am.percentdiffArray(series.data[column],comparisons[i]);	
+
+			xAxis = cm.dimensions(values);
+
+			min = xAxis.min;
+			max = xAxis.max;
+			ticks = Math.round((xAxis.max-xAxis.min)/xAxis.ticksize);  // to prevent floating point values
+			buckets = ticks * Math.floor(10/ticks); // get to 10 or less buckets
+	
+			console.log(comparisons_eng[i] + " returns");
+			console.log("Average return: " + am.toP(am.meanArray(values),1));
+			console.log(min + " " + max);
+			console.log(ticks);
+			console.log(buckets);
+
+			x = cm.linspace(min, max, buckets);
+			y = values;
+
+			data = histogram({
+			    data : y,
+			    bins : x
+			})
+			
+			histoData = cm.histogramData(data);
+			
+			$("body").append('<div id="' + ('chart_' + comparisons[i]) + '" style="width: 550px; height: 400px; margin: 0 auto"></div>');
+			$(('#chart_' + comparisons[i])).highcharts(generateChart(chartTemplate("histogram"), chartMeta(), chartData((comparisons_eng[i] + " returns"),histoData)));
+
+			console.log(JSON.stringify(histoData));
+
+			console.log("");
+		}
+	})
+	.fail(function() {
+		console.log( url + " failed to load" );
+	});
+
+		
 	// CHART WIDTH SLIDER
     // $('#width').bind('input', function () {
     //     $('#chart').highcharts().setSize(this.value, 400, false);
@@ -232,9 +309,8 @@ $(function() {
 
 </head>
 <body>
-<div id="chart" style="width: 550px; height: 400px; margin: 0 auto"></div>
 <!-- <input id="width" type="range" value="500" min="100" max="1000" /> -->
-<div id="log"></div>
+<!-- <div id="log"></div> -->
 <!-- <button onclick="saveAsImg(document.getElementById('container1'));">Save as PNG Image</button>
 <button onclick="toImg(document.getElementById('container2'), document.getElementById('container2'));">Convert to image</button> -->
 </body>
