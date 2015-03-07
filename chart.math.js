@@ -56,6 +56,22 @@
 		
 		return axis;
 	}
+
+	//     var n_symbols = ["", "", "", "k", "kk", "kkk", "m", "mm", "mmm", "b"];
+	//     var multiple = n_symbols[numDeflator(json.data[0][1])];
+	//     label('number', (series_label + " (" + json.y_unit  + ", " + multiple + ")"));
+	//
+	// function numDeflator(num) {
+	//     var pow10 = 0;
+	//
+	//     if (num < 0)
+	//         num = -num;
+	//
+	//     if (num > 0)
+	//         pow10 = Math.floor( Math.floor(round(Math.log(num, 10), 6)) / 3) * 3;
+	//
+	//     return pow10;
+	// }
 	
 	// TEST
 	// var x = [1,2,-3,4,5,6,7];
