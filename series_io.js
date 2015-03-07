@@ -27,8 +27,32 @@
 (function(){
 
     'use strict';
-    
-	// Save obj to file
+	
+	// GET.  If getting series JSON from URL via jQueary rather than Require
+	// $.getJSON(url, function(body, textStatus, jqXHR) {
+	// 	console.log(url + " loaded successfully");
+	// 	console.log(body);
+	// })
+	// .fail(function() {
+	// 	console.log( url + " failed to load" );
+	// 	return null;
+	// });
+	//
+	// OR
+	//
+	// $.ajax({
+	//    url: 'sp_monthly.json',
+	//    type: 'GET',
+	//    async: true,
+	//    dataType: "json",
+	//    success: function (data) {
+	//        var series = data;
+	// 	   console.log(JSON.stringify(series.data[column]));
+	//    }
+	//  });
+    	
+		
+	// SAVE obj to file
 	// Eg. var file = './sp_monthly.json';  var series = require(file);   s_io.save(file, series);
 	function save(filename, obj) {
 		var fs = require('fs');
@@ -42,7 +66,7 @@
 		}); 
 	}
 
-	// Add column to series
+	// ADD column to series
 	// Eg. s_io.add(series, metric_name, values)
 	// Eg. s_io.add(series, metric + "_pdiff_" + comparisons[i], values)
 	function add(series, metric_name, values) {
@@ -52,7 +76,7 @@
 		return true;
 	}
 
-	// Remove column from series
+	// REMOVE column from series
 	// Eg. s_io.remove(series, metric_name)
 	function remove(series, metric_name) {
 		var mcolumn = series.meta.columns.indexOf(metric_name);  // test for metric_name
@@ -65,7 +89,7 @@
 
 	}
 
-	// Update column in series
+	// UPDATE column in series
 	// Eg. s_io.update(series, metric_name, values)
 	function update(series, metric_name, values) {
 		var mcolumn = series.meta.columns.indexOf(metric_name);  // test for metric_name
