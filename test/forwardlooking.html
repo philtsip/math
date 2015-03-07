@@ -1,0 +1,38 @@
+<html>
+<head>
+<script type="text/javascript" src="jquery.min.js"></script>
+<script type="text/javascript" src="./../array.math.js"></script>
+
+<script>
+// var am = require('./../array.math.js');
+// var series = require('./sp_monthly.json');
+var column = 8; 
+var num_diffs = 120; 
+
+
+$(function() {
+ $.ajax({
+    url: 'sp_monthly.json',
+    type: 'GET',
+    async: true,
+    dataType: "json",
+    success: function (data) {
+        var series = data;
+		
+
+		
+		console.log(JSON.stringify(series.data[column]));
+		console.log(JSON.stringify(am.forwardlooking(series.data[column],num_diffs)));
+
+		console.log(JSON.stringify(series.data[column].length));
+		console.log(JSON.stringify(am.forwardlooking(series.data[column],num_diffs).length));
+		
+    }
+  });
+ });
+ 
+</script>
+</head>
+<body>
+</body>
+</html>
