@@ -8,6 +8,8 @@
 	LastDayofMonth
 	toMMMYY
 	toQYY
+	startIndex
+	since
 	convertSeriesFrequency
 */
 
@@ -71,9 +73,7 @@
 	    return (q_names[date.getMonth()]+ "'" + date.getFullYear().toString().substring(2));
 	}
 	
-	// Options: weekly, monthly, annual
-	// Assumes first data column is standard-formatted dates (eg. YYYY/MM/DD)
-
+	
 	// DATA STRUCTURE
 	//
 	// var series = {
@@ -86,7 +86,54 @@
 	// 		[]
 	// 	]
 	// }
+	// Assumes first data column is standard-formatted dates (eg. YYYY/MM/DD)
 
+
+	// Return startIndex of date array - equal or after the start date.  -1 if all dates are before start date
+	// eg. startIndex(["2014/03/27","2014/04/28","2014/04/30"], "2014/04/01") => 1
+	function startIndex(dateArray, startDate) {
+		startDate = new Date(startDate);
+
+		if (true) { // TODO: check for date format
+			if ( (new Date(dateArray[0])) < (new Date(dateArray[1])) ) {// chronological 
+				// iterate through dates
+				for (var i = 0; i < dateArray.length; i++) {
+					 if ( startDate <= (new Date(dateArray[i])) )
+						 return i;
+				}
+				return -1;
+			}
+			else
+				return null; // TODO: reverse chronological?
+		}
+		else
+			return null; // bad format
+	}
+
+	// Return series since the start date (on or after)
+	// eg. var shortSeries = since(series, "2014/04/01");
+	function since(inputObj, startDate) {
+		var start = startIndex(inputObj.data[0], startDate);
+		
+		var numCols = inputObj.data.length;
+		var outputObj = {};
+	
+		outputObj.meta = inputObj.meta; 
+		outputObj.data = []; 
+		
+		for (var i = 0; i < numCols; i++) {
+			if (start == -1)
+				outputObj.data.push([]);
+			else
+				outputObj.data.push(inputObj.data[i].slice(start));
+		}
+			
+		return outputObj;
+	}
+
+	// Filter series data down to a particular frequency
+	// Options: weekly, monthly, annual
+	// eg. console.log(convertSeriesFrequency(series, "monthly"));	
 	function convertSeriesFrequency (inputObj, frequency) {
 		var numCols = inputObj.data.length;
 		var numRows = inputObj.data[0].length;
@@ -154,6 +201,8 @@
 	a.LastDayofMonth = LastDayofMonth;
 	a.toMMMYY = toMMMYY;
 	a.toQYY = toQYY;
+	a.startIndex = startIndex;
+	a.since = since;
 	a.convert = convertSeriesFrequency;
 
     if (typeof module !== 'undefined' && module.exports) {
