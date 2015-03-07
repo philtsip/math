@@ -94,6 +94,29 @@
 		return axis;
 	}
 
+	// Create n number of equally spaced buckets between min and max
+	// a = min, b = max, generate n buckets
+	function linspace(a,b,n) {
+		n++;
+	    if(typeof n === "undefined") n = Math.max(Math.round(b-a)+1,1);
+	    if(n<2) { return n===1?[a]:[]; }
+	    var i,ret = Array(n);
+	    n--;
+	    for(i=n;i>=0;i--) { ret[i] = (i*b+(n-i)*a)/n; }
+	    return ret;
+	}
+
+	// Pluck x and y values out of a histogramjs output
+	function histogramData(data) {
+		var obj = {}; obj.x = [], obj.y = [];
+		
+		for (var i = 0; i < data.length; i++) {
+			obj.x.push(data[i].x);
+			obj.y.push(data[i].y);
+		}
+		return obj;
+	}
+
 	//     var n_symbols = ["", "", "", "k", "kk", "kkk", "m", "mm", "mmm", "b"];
 	//     var multiple = n_symbols[numDeflator(json.data[0][1])];
 	//     label('number', (series_label + " (" + json.y_unit  + ", " + multiple + ")"));
@@ -117,6 +140,8 @@
     // Exports and modularity
 	var a = {};
     a.dimensions = axisDimensions;
+	a.linspace = linspace;
+	a.histogramData = histogramData;
 	
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = a;
