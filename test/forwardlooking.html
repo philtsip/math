@@ -2,6 +2,7 @@
 <head>
 <script type="text/javascript" src="jquery.min.js"></script>
 <script type="text/javascript" src="./../array.math.js"></script>
+<script type="text/javascript" src="./../date.math.js"></script>
 
 <script>
 // var am = require('./../array.math.js');
@@ -20,13 +21,16 @@ $(function() {
         var series = data;
 		
 
-		
+		console.log(JSON.stringify(series.data[0]));		
 		console.log(JSON.stringify(series.data[column]));
-		console.log(JSON.stringify(am.forwardlooking(series.data[column],num_diffs)));
-
+		// console.log(JSON.stringify(am.forwardlooking(series.data[column],num_diffs)));
+		//
 		console.log(JSON.stringify(series.data[column].length));
-		console.log(JSON.stringify(am.forwardlooking(series.data[column],num_diffs).length));
+		// console.log(JSON.stringify(am.forwardlooking(series.data[column],num_diffs).length));
 		
+		var shortSeries = dm.since(series,"2014/01/01");
+		console.log(JSON.stringify(shortSeries));
+		console.log(shortSeries.data[0].length);
     }
   });
  });
