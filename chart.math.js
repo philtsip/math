@@ -11,7 +11,44 @@
 
     'use strict';
     
-	var am = require('./array.math.js');
+	// ARRAY MATH SUBSET
+	
+	//  round(number, decimals), e.g. round(10.3333, 2)
+	//  Source: http://stackoverflow.com/questions/11832914/round-to-at-most-2-decimal-places-in-javascript#comment42209497_19722641
+	function round(number, decimals) {
+	  return +(Math.round(number + "e+" + decimals)  + "e-" + decimals);
+	}
+
+	//  ceil(number, decimals), e.g. ceil(10.3333, 2)
+	function ceil(number, decimals) {
+	  return +(Math.ceil(number + "e+" + decimals)  + "e-" + decimals);
+	}
+
+	//  floor(number, decimals), e.g. floor(10.3333, 2)
+	function floor(number, decimals) {
+	  return +(Math.floor(number + "e+" + decimals)  + "e-" + decimals);
+	}
+
+	//  round to nearest
+	//  nearest(number, rounding), e.g. nearest(1319, 500)
+	function nearest(number, rounding) {
+	  return +(Math.round(number/rounding) * rounding);
+	}
+
+	//  ceil to nearest
+	//  nCeil(number, rounding), e.g. nCeil(1319, 500)
+	function nCeil(number, rounding) {
+	  return +(Math.ceil(number/rounding) * rounding);
+	}
+
+	//  floor to nearest
+	//  nFloor(number, rounding), e.g. nFloor(1319, 500)
+	function nFloor(number, rounding) {
+	  return +(Math.floor(number/rounding) * rounding);
+	}
+
+	
+	// CHART MATH	
 
 	function tickWidth(x) { // x = diff between max and min of data
 		if (x <=1)
@@ -41,17 +78,17 @@
 		// Create min-max to fit and match up to zero
 		
 		if (axis.ticksize < 1) {  // if ticksize is smaller than 1 (=.1), round to one decimal
-			axis.min = am.floor(ar_min,1);
-			axis.max = am.ceil(ar_max,1);
+			axis.min = floor(ar_min,1);
+			axis.max = ceil(ar_max,1);
 		}
 			
 		else if (axis.ticksize == 1) { // if ticksize is 1, round to whole #s
-			axis.min = am.floor(ar_min,0);
-			axis.max = am.ceil(ar_max,0);
+			axis.min = floor(ar_min,0);
+			axis.max = ceil(ar_max,0);
 		}
 		else {
-			axis.min = am.nFloor(ar_min,axis.ticksize)
-			axis.max = am.nCeil(ar_max,axis.ticksize)
+			axis.min = nFloor(ar_min,axis.ticksize)
+			axis.max = nCeil(ar_max,axis.ticksize)
 		}
 		
 		return axis;
