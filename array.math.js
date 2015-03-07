@@ -242,6 +242,7 @@
 	// Returns an array of % change between array elements.  Initial elements returned as null
 	// Span designates gap between comparison points.  eg. 2000 - 2001 = 1 year span.  2000 - 2010 = 10 year span.  Calculated on a rolling basis.
 	// Example: percentdiffArray([5, 2]);
+	// NOTE: returns null vallues for both initial rows and if divide by zero
 
 	function percentdiffArray(input_array, span) {
     
