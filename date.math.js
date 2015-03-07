@@ -6,6 +6,8 @@
 
 	getWeek
 	LastDayofMonth
+	toMMMYY
+	toQYY
 	convertSeriesFrequency
 */
 
@@ -53,6 +55,22 @@
 		return numdays[month-1]; 		
 	}
 
+	// Input: Date formatted as JS #, Output: Date formatted as MMM-YY.  Eg. toMMMYY(new Date()) => "Mar-15"
+	function toMMMYY(num){
+		var m_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+	    
+		var date = new Date(num);
+	    return (m_names[date.getMonth()]+ "-" + date.getFullYear().toString().substring(2));
+	}
+
+	// Input: Date formatted as JS #, Output: Date formatted as Q'YY.  Eg. toQYY(new Date()) => "Q1'15"
+	function toQYY(num){
+	    var q_names = ["Q1", "Q1", "Q1", "Q2", "Q2", "Q2", "Q3", "Q3", "Q3", "Q4", "Q4", "Q4"];
+	    
+		var date = new Date(num);
+	    return (q_names[date.getMonth()]+ "'" + date.getFullYear().toString().substring(2));
+	}
+	
 	// Options: weekly, monthly, annual
 	// Assumes first data column is standard-formatted dates (eg. YYYY/MM/DD)
 
@@ -134,6 +152,8 @@
     // Exports and modularity
 	var a = {};
 	a.LastDayofMonth = LastDayofMonth;
+	a.toMMMYY = toMMMYY;
+	a.toQYY = toQYY;
 	a.convert = convertSeriesFrequency;
 
     if (typeof module !== 'undefined' && module.exports) {
