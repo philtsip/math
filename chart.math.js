@@ -15,24 +15,36 @@
 	
 	//  round(number, decimals), e.g. round(10.3333, 2)
 	//  Source: http://stackoverflow.com/questions/11832914/round-to-at-most-2-decimal-places-in-javascript#comment42209497_19722641
+	//  Note: .toFixed(20) to solve for scientific notation numbers upto 20 decimals - http://stackoverflow.com/questions/1685680/how-to-avoid-scientific-notation-for-large-numbers-in-javascript
 	function round(number, decimals) {
-	  return +(Math.round(number + "e+" + decimals)  + "e-" + decimals);
+		if (!decimals) 
+			decimals = 0;
+		
+	  	return +(Math.round(number.toFixed(20) + "e+" + decimals)  + "e-" + decimals);
 	}
 
 	//  ceil(number, decimals), e.g. ceil(10.3333, 2)
+	//  Note: .toFixed(20) to solve for scientific notation numbers upto 20 decimals - http://stackoverflow.com/questions/1685680/how-to-avoid-scientific-notation-for-large-numbers-in-javascript
 	function ceil(number, decimals) {
-	  return +(Math.ceil(number + "e+" + decimals)  + "e-" + decimals);
+		if (!decimals) 
+			decimals = 0;
+		
+	  	return +(Math.ceil(number.toFixed(20) + "e+" + decimals)  + "e-" + decimals);
 	}
 
 	//  floor(number, decimals), e.g. floor(10.3333, 2)
+	//  Note: .toFixed(20) to solve for scientific notation numbers upto 20 decimals - http://stackoverflow.com/questions/1685680/how-to-avoid-scientific-notation-for-large-numbers-in-javascript
 	function floor(number, decimals) {
-	  return +(Math.floor(number + "e+" + decimals)  + "e-" + decimals);
+		if (!decimals) 
+			decimals = 0;
+		
+	  	return +(Math.floor(number.toFixed(20) + "e+" + decimals)  + "e-" + decimals);
 	}
 
 	//  round to nearest
 	//  nearest(number, rounding), e.g. nearest(1319, 500)
 	function nearest(number, rounding) {
-	  return +(Math.round(number/rounding) * rounding);
+	  	return +(Math.round(number/rounding) * rounding);
 	}
 
 	//  ceil to nearest
@@ -46,7 +58,7 @@
 	function nFloor(number, rounding) {
 	  return +(Math.floor(number/rounding) * rounding);
 	}
-
+	
 	
 	// CHART MATH	
 
@@ -73,23 +85,26 @@
 		var ar_min = Math.min.apply(null, array);
 		var ar_max = Math.max.apply(null, array);
 	
-		axis.ticksize = tickWidth(ar_max-ar_min);
+		axis.tickwidth = tickWidth(ar_max-ar_min);
 		
 		// Create min-max to fit and match up to zero
 		
-		if (axis.ticksize < 1) {  // if ticksize is smaller than 1 (=.1), round to one decimal
+		if (axis.tickwidth < 1) {  // if tickwidth is smaller than 1 (=.1), round to one decimal
 			axis.min = floor(ar_min,1);
 			axis.max = ceil(ar_max,1);
 		}
 			
-		else if (axis.ticksize == 1) { // if ticksize is 1, round to whole #s
+		else if (axis.tickwidth == 1) { // if tickwidth is 1, round to whole #s
 			axis.min = floor(ar_min,0);
 			axis.max = ceil(ar_max,0);
 		}
 		else {
-			axis.min = nFloor(ar_min,axis.ticksize)
-			axis.max = nCeil(ar_max,axis.ticksize)
+			axis.min = nFloor(ar_min,axis.tickwidth)
+			axis.max = nCeil(ar_max,axis.tickwidth)
 		}
+		
+		// Number of ticks on the axis
+		axis.majorticks = Math.round((axis.max-axis.min)/axis.tickwidth);  // rounded to prevent floating point values
 		
 		return axis;
 	}

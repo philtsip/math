@@ -113,7 +113,10 @@
 	// Return series since the start date (on or after)
 	// eg. var shortSeries = since(series, "2014/04/01");
 	function since(inputObj, startDate) {
-		var start = startIndex(inputObj.data[0], startDate);
+		if (!startDate)
+			var start = 0;
+		else
+			var start = startIndex(inputObj.data[0], startDate);
 		
 		var numCols = inputObj.data.length;
 		var outputObj = {};

@@ -59,24 +59,36 @@
 
 	//  round(number, decimals), e.g. round(10.3333, 2)
 	//  Source: http://stackoverflow.com/questions/11832914/round-to-at-most-2-decimal-places-in-javascript#comment42209497_19722641
+	//  Note: .toFixed(20) to solve for scientific notation numbers upto 20 decimals - http://stackoverflow.com/questions/1685680/how-to-avoid-scientific-notation-for-large-numbers-in-javascript
 	function round(number, decimals) {
-	  return +(Math.round(number + "e+" + decimals)  + "e-" + decimals);
+		if (!decimals) 
+			decimals = 0;
+		
+	  	return +(Math.round(number.toFixed(20) + "e+" + decimals)  + "e-" + decimals);
 	}
 
 	//  ceil(number, decimals), e.g. ceil(10.3333, 2)
+	//  Note: .toFixed(20) to solve for scientific notation numbers upto 20 decimals - http://stackoverflow.com/questions/1685680/how-to-avoid-scientific-notation-for-large-numbers-in-javascript
 	function ceil(number, decimals) {
-	  return +(Math.ceil(number + "e+" + decimals)  + "e-" + decimals);
+		if (!decimals) 
+			decimals = 0;
+		
+	  	return +(Math.ceil(number.toFixed(20) + "e+" + decimals)  + "e-" + decimals);
 	}
 
 	//  floor(number, decimals), e.g. floor(10.3333, 2)
+	//  Note: .toFixed(20) to solve for scientific notation numbers upto 20 decimals - http://stackoverflow.com/questions/1685680/how-to-avoid-scientific-notation-for-large-numbers-in-javascript
 	function floor(number, decimals) {
-	  return +(Math.floor(number + "e+" + decimals)  + "e-" + decimals);
+		if (!decimals) 
+			decimals = 0;
+		
+	  	return +(Math.floor(number.toFixed(20) + "e+" + decimals)  + "e-" + decimals);
 	}
 
 	//  round to nearest
 	//  nearest(number, rounding), e.g. nearest(1319, 500)
 	function nearest(number, rounding) {
-	  return +(Math.round(number/rounding) * rounding);
+	  	return +(Math.round(number/rounding) * rounding);
 	}
 
 	//  ceil to nearest
@@ -112,8 +124,12 @@
 	}
 	
 	// Format number as a percentage.  Eg. toP(2.3454654,1) => "234.5%"
+	//  Note: .toFixed(20) to solve for scientific notation numbers upto 20 decimals - http://stackoverflow.com/questions/1685680/how-to-avoid-scientific-notation-for-large-numbers-in-javascript
 	function toP(number, decimals) {
-	  return +(Math.round(number*100 + "e+" + decimals)  + "e-" + decimals) + '%';
+		if (!decimals) 
+			decimals = 0;
+		
+	 	return +(Math.round((number*100).toFixed(20) + "e+" + decimals)  + "e-" + decimals) + '%';
 	}
 
 	//  ARRAY MATH
@@ -219,12 +235,12 @@
 
 	function diffArray(input_array, span) {
     
-	    if (input_array instanceof Array) {
+		if (!span)
+			span = 1;
+	
+	    if (input_array instanceof Array && (span < input_array.length) ) {
 
 		    var output_array = [];
-		
-			if (!span)
-				span = 1;
 		
 			for (var i = 0; i < span; i++) 
 				output_array.push(null);
@@ -246,12 +262,12 @@
 
 	function percentdiffArray(input_array, span) {
     
-	    if (input_array instanceof Array) {
+		if (!span)
+			span = 1;
+	
+	    if (input_array instanceof Array && (span < input_array.length) ) {
 
 		    var output_array = [];
-		
-			if (!span)
-				span = 1;
 		
 			for (var i = 0; i < span; i++) 
 				output_array.push(null);
