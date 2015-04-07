@@ -194,7 +194,7 @@ $(function() {
 		console.log(url + " loaded successfully");
 
 		var fullSeries = body;
-		var series = dm.since(fullSeries);
+		var series = dm.since(fullSeries,"1950/01/01");
 		
 		var column = series.meta.columns.indexOf(metric); 
 

@@ -88,6 +88,7 @@ $(function() {
 					style: { fontSize: '15px', fontFamily: "'Open Sans', Arial, sans-serif", fontWeight: '700' }
 				},
 				xAxis: {
+					title: {style: default_style },
 					labels: { style: default_style, align: 'right', autoRotation: [-45],
 						// autoRotation: [0],
 						// staggerLines: 2,
@@ -101,6 +102,9 @@ $(function() {
 				yAxis: {
 					min: 0,
 					title: { style: default_style },
+		            // plotLines: [{
+		            //     color: '#FFFFFF'
+		            // }],
 					// gridLineWidth: 0,
 					labels: { style: default_style },
 					stackLabels: { enabled: true, style: default_style,
@@ -142,6 +146,71 @@ $(function() {
 				}
 			}
 		
+			if (type == "line") 
+				return 	{
+					chart: {
+						type: 'line',
+						animation: false,
+						style: default_style
+					},
+					title: {
+						style: { fontSize: '15px', fontFamily: "'Open Sans', Arial, sans-serif", fontWeight: '700' }
+					},
+					xAxis: {
+						title: {style: default_style },
+			            type: 'datetime',
+						tickInterval: 24 * 3600 * 1000 * 30,
+						labels: { style: default_style, align: 'right', autoRotation: [-45],
+							// autoRotation: [0],
+							// staggerLines: 2,
+						}
+					},
+					yAxis: {
+						min: 0,
+						title: { style: default_style },
+						// gridLineWidth: 0,
+						labels: { style: default_style },
+					},
+					legend: {
+						enabled: false, x: 30, verticalAlign: 'bottom', floating: false, borderColor: '#d4d4d4', borderWidth: 1, shadow: false, itemStyle: default_style
+					},
+					tooltip: { 
+						// xDateFormat: '%Y-%m-%d',
+						headerFormat: '{point.x:%b %Y}<br />',
+						pointFormat: 'S&P500: <b>{point.y:.0f}</b>' 
+					},
+					plotOptions: {
+						series: {
+							animation: false,
+						},
+			            line: {
+			                marker: {
+			                    enabled: false
+			                },
+			                dataLabels: {
+			                    enabled: true,
+								formatter: function() {
+								                    if (this.point.x == this.series.data.length - 1) {
+								                        return Math.round(this.y);
+								                    } else {
+								                        return null;
+								                    }
+								                }
+			                },
+			                // enableMouseTracking: false
+			            }
+					},
+					credits: {
+						enabled: true,
+						position: { align: 'left', x: 15, verticalAlign: 'bottom', y: -20 },
+						style: {
+							// cursor: 'pointer',
+							// color: '#909090',
+							fontSize: '9px', fontFamily: "'Open Sans', Arial, sans-serif",
+						}
+					}
+				}
+		
 		else
 			return null;
 	}	
@@ -157,29 +226,46 @@ $(function() {
 	
 	}
 	
-	function chartData(title, chart_data) {
-		var zero_line = am.roundArray(chart_data.x,4).indexOf(0)-.5;  // compare with 4 digits of precision
-		
-		return {
-			title: { text:  title },
-			yAxis: { title: { 	text: '# ' } },
-			xAxis: { 
-				title: { text: '% total return', },
-				categories: chart_data.x,
-	            plotLines: [{ color: '#FF0000', width: 2, value: zero_line, dashStyle: 'dash' }]	
-			},
-			series: [{ data: chart_data.y }]		
-		}	
+	function chartData(type, title, x_data, x_label, y_data, y_label) {
+		if (type == "histogram") {
+			var zero_line = am.roundArray(x_data,4).indexOf(0)-.5;
+			
+			return {
+				title: { text:  title },
+				xAxis: { 
+					title: { text: x_label },
+					categories: x_data,
+	            	plotLines: [{ color: '#FF0000', width: 2, value: zero_line, dashStyle: 'dash' }]	
+				},
+				yAxis: { title: { text: y_label } },
+				series: [{ data: y_data }]		
+			}				
+		}
+		else
+			return {
+				title: { text:  title },
+				xAxis: { 
+					title: { text: x_label },
+					categories: x_data,
+				},
+				yAxis: { title: { text: y_label } },
+				series: [{ data: y_data }]		
+			}	
 	}
 
-// HISTOGRAM
+// CHARTS
 	
 	// CONSTANTS
 
-	var url = './sp_monthly.json';
+	var url = "./sp_monthly.json";
 	var metric = "adj_close";
+	var startDate = document.getElementById("startDate").value;
 
-	var values = [], xAxis = {}, min, max, majorticks, buckets, x, y = [], data, histoData = {}, log = "";
+	var log = "";
+	
+	var lineTrendData = {};
+	var barReturnsData = {};
+	var histoYvalues = [], histoXaxis = {}, histoBuckets, histoData, histoChartData = [];
 
 	var comparisons_eng = ["monthly", "annual", "5yr", "7yr", "10yr", "20yr"];
 	var comparisons = [1,12,60,84,120,240];
@@ -194,60 +280,58 @@ $(function() {
 		console.log(url + " loaded successfully");
 
 		var fullSeries = body;
-		var series = dm.since(fullSeries);
+		var series, column;
 		
-		var column = series.meta.columns.indexOf(metric); 
+		series = dm.since(fullSeries, startDate);
+		
+		column = series.meta.columns.indexOf(metric); 
+
+		// lineTrendData =
+		$("#charts").append('<div id="' + ('chart_' + 'lineTrend') + '" style="width: 550px; height: 400px; margin: 0 auto"></div>');
+		$(('#chart_' + 'lineTrend')).highcharts(generateChart(chartTemplate("line"), chartMeta(), chartData("line", "S&P Adj Close",dm.toJSDateArray(series.data[0]),"Date",series.data[column],"Adj Close")));
+		
+		
+// HISTOGRAM
 
 		for (var i = 0; i < comparisons.length; i++) {
 
-			values = am.percentdiffArray(series.data[column],comparisons[i]);
+			histoYvalues = am.percentdiffArray(series.data[column],comparisons[i]);
 				
-			if (values != null) {
+			if (histoYvalues != null) {
 				
-				xAxis = cm.dimensions(values);
+				histoXaxis = cm.dimensions(histoYvalues);
 
-				min = xAxis.min;
-				max = xAxis.max;
-				majorticks = xAxis.majorticks;
-				
-				if (majorticks < 10)
-					buckets = majorticks * Math.floor(10/majorticks); // get to 10 or less buckets
+				if (histoXaxis.majorticks < 10)
+					histoBuckets = histoXaxis.majorticks * Math.floor(10/histoXaxis.majorticks); // get to 10 or less histoBuckets
 				else
-					buckets = majorticks;
+					histoBuckets = histoXaxis.majorticks;
 	
-				// console.log(comparisons_eng[i] + " returns");
+				console.log(comparisons_eng[i] + " returns");
 				//
-				// console.log(Math.min.apply(null, values));
-				// console.log(Math.max.apply(null, values));
+				// console.log(Math.min.apply(null, histoYvalues));
+				// console.log(Math.max.apply(null, histoYvalues));
 				//
-				// console.log(min + " " + max);
-				// console.log(majorticks);
-				// console.log(buckets);
+				console.log(histoXaxis.min + " " + histoXaxis.max + " " + histoBuckets);
+				// console.log(JSON.stringify(histoYvalues));
+				// console.log(histoBuckets);
 
-				x = cm.linspace(min, max, buckets);
-				y = values;
-
-				data = histogram({
-				    data : y,
-				    bins : x
+				histoData = histogram({
+				    data : histoYvalues,
+				    bins : cm.linspace(histoXaxis.min, histoXaxis.max, histoBuckets)
 				})
 			
-				histoData = cm.histogramData(data);
+				histoChartData = cm.toHistoChart(histoData);
 				
 				log = '';
-				log += ( '<p>' + 'Average return: ' + am.toP(am.meanArray(values),1) + '</p>' );
+				log += ( '<p>' + 'Average return: ' + am.toP(am.meanArray(histoYvalues),1) + '</p>' );
 
 				for (var j = 0; j < tests.length; j++) {
-					log += ( '<p>' + 'Probability ' + tests_eng[j] + ': ' + am.toP(am.percentif(values,tests[j]),0) + '</p>' );
+					log += ( '<p>' + 'Probability ' + tests_eng[j] + ': ' + am.toP(am.percentif(histoYvalues,tests[j]),0) + '</p>' );
 				}
 			
-				$("body").append('<div id="' + ('chart_' + comparisons[i]) + '" style="width: 550px; height: 400px; margin: 0 auto"></div>');
-				$(('#chart_' + comparisons[i])).highcharts(generateChart(chartTemplate("histogram"), chartMeta(), chartData((comparisons_eng[i] + " returns"),histoData)));
-				$("body").append('<div id="' + ('log_' + comparisons[i]) + '" style="width: 550px; margin: 0 auto">' + log + '</div>');
-
-
-				console.log(JSON.stringify(histoData));
-				console.log(JSON.stringify(log));
+				$("#charts").append('<div id="' + ('chart_' + comparisons[i]) + '" style="width: 550px; height: 400px; margin: 0 auto"></div>');
+				$(('#chart_' + comparisons[i])).highcharts(generateChart(chartTemplate("histogram"), chartMeta(), chartData("histogram", (comparisons_eng[i] + " returns"),histoChartData[0],"% total return",histoChartData[1],"#")));
+				$("#charts").append('<div id="' + ('log_' + comparisons[i]) + '" style="width: 550px; margin: 0 auto">' + log + '</div>');
 
 				console.log("");
 			}
@@ -271,6 +355,8 @@ $(function() {
 
 </head>
 <body>
+<input type="text" id="startDate" value="1999/01/01">
+<div id="charts"></div>
 <!-- <input id="width" type="range" value="500" min="100" max="1000" /> -->
 <!-- <div id="log"></div> -->
 <!-- <button onclick="saveAsImg(document.getElementById('container1'));">Save as PNG Image</button>
