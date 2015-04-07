@@ -1,4 +1,0 @@
-shilller pe
-pe
-forward PE => 7, Inflation <2
-
