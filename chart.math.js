@@ -5,6 +5,8 @@
 /*  JAVASCRIPT CHART MATH UTILS
 
 	dimensions
+	linspace
+	toHistoChart
 */
 
 (function(){
@@ -122,14 +124,14 @@
 	}
 
 	// Pluck x and y values out of a histogramjs output
-	function histogramData(data) {
-		var obj = {}; obj.x = [], obj.y = [];
+	function toHistoChart(data) {
+		var array = [[],[]];
 		
 		for (var i = 0; i < data.length; i++) {
-			obj.x.push(data[i].x);
-			obj.y.push(data[i].y);
+			array[0].push(data[i].x);
+			array[1].push(data[i].y);
 		}
-		return obj;
+		return array;
 	}
 
 	//     var n_symbols = ["", "", "", "k", "kk", "kkk", "m", "mm", "mmm", "b"];
@@ -156,7 +158,7 @@
 	var a = {};
     a.dimensions = axisDimensions;
 	a.linspace = linspace;
-	a.histogramData = histogramData;
+	a.toHistoChart = toHistoChart;
 	
     if (typeof module !== 'undefined' && module.exports) {
         module.exports = a;

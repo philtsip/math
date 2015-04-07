@@ -8,6 +8,7 @@
 	LastDayofMonth
 	toMMMYY
 	toQYY
+	toJSDateArray
 	startIndex
 	since
 	convertSeriesFrequency
@@ -57,7 +58,7 @@
 		return numdays[month-1]; 		
 	}
 
-	// Input: Date formatted as JS #, Output: Date formatted as MMM-YY.  Eg. toMMMYY(new Date()) => "Mar-15"
+	// Input: Date formatted as JS date, Output: Date formatted as MMM-YY.  Eg. toMMMYY(new Date()) => "Mar-15"
 	function toMMMYY(num){
 		var m_names = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 	    
@@ -65,7 +66,7 @@
 	    return (m_names[date.getMonth()]+ "-" + date.getFullYear().toString().substring(2));
 	}
 
-	// Input: Date formatted as JS #, Output: Date formatted as Q'YY.  Eg. toQYY(new Date()) => "Q1'15"
+	// Input: Date formatted as JS date, Output: Date formatted as Q'YY.  Eg. toQYY(new Date()) => "Q1'15"
 	function toQYY(num){
 	    var q_names = ["Q1", "Q1", "Q1", "Q2", "Q2", "Q2", "Q3", "Q3", "Q3", "Q4", "Q4", "Q4"];
 	    
@@ -88,7 +89,16 @@
 	// }
 	// Assumes first data column is standard-formatted dates (eg. YYYY/MM/DD)
 
-
+	// Convert standard-formatted dates (eg. YYYY/MM/DD) to JS dates
+	function toJSDateArray(dateArray) {
+		var output_array = [];
+		
+		for (var i = 0; i < dateArray.length; i++)
+			 output_array.push(new Date(dateArray[i]))
+			
+		return output_array
+	}
+	
 	// Return startIndex of date array - equal or after the start date.  -1 if all dates are before start date
 	// eg. startIndex(["2014/03/27","2014/04/28","2014/04/30"], "2014/04/01") => 1
 	function startIndex(dateArray, startDate) {
@@ -204,6 +214,7 @@
 	a.LastDayofMonth = LastDayofMonth;
 	a.toMMMYY = toMMMYY;
 	a.toQYY = toQYY;
+	a.toJSDateArray = toJSDateArray;
 	a.startIndex = startIndex;
 	a.since = since;
 	a.convert = convertSeriesFrequency;
