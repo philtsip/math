@@ -39,7 +39,7 @@ for (var i = 0; i < comparisons.length; i++) {
 	// 	buckets = 10;
 	min = xAxis.min;
 	max = xAxis.max;
-	ticks = Math.round((xAxis.max-xAxis.min)/xAxis.ticksize);  // to prevent floating point values
+	ticks = Math.round((xAxis.max-xAxis.min)/xAxis.tickwidth);  // to prevent floating point values
 	buckets = ticks * Math.floor(10/ticks); // get to 10 or less buckets
 	
 	console.log(comparisons_eng[i] + " returns");
